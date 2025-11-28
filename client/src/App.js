@@ -2,6 +2,12 @@ const { useState } = require("react");
 
 function App(data) {
   const [filteredUsers, setFilteredUsers] = useState(data);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleDeleteAll = () => {};
+
+  const handleAddUser = () => {};
+
   return (
     <div>
       <h2>User Database</h2>
