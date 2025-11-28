@@ -32,102 +32,77 @@ class UserDatabase {
     }
 
     async getAllUsers() {
-        if(this.database) {
-            this.database.query('SELECT * FROM users', (err, res) => {
-                if (err) {
-                    console.error('Error executing query', err.stack);
-                } else {
-                    this.users = res.rows;
-                    console.log('Users fetched:', this.users);
-                }
-            });
+        if (this.database) {
+            try {
+                const res = await this.database.query('SELECT * FROM users');
+                this.users = res.rows;
+                console.log('Users fetched:', this.users);
+            } catch (err) {
+                console.error('Error executing query', err.stack);
+            }
         }
         return this.users;
     }
 
-    getUserById(id) {
+
+    async getUserById(id) {
         if (this.database) {
-            this.database.query(
-                'SELECT * FROM users WHERE id = $1',
-                [id],
-                (err, res) => {
-                    if (err) {
-                        console.error('Error executing query', err.stack);
-                    } else {
-                        console.log('User fetched with id:', id, res.rows[0]);
-                        return res.rows[0];
-                    }
-                }
-            );
+            try {
+                const user = await this.database.query('SELECT * FROM users WHERE id = $1', [id]);
+                console.log('User fetched by id:', user);
+            } catch (err) {
+                console.error('Error fetching user by id', err.stack);
+            }
         }
+        return user;
     }
 
-    createUser(user) {
+    async createUser(user) {
         const all = this.getAllUsers();
         const exists = all.find(u => u.id === user.id);
         if (!exists && this.database) {
-            this.database.query(
-                'INSERT INTO users (id, name, email, role) VALUES ($1, $2, $3, $4)',
-                [user.id, user.name, user.email, user.role],
-                (err, res) => {
-                    if (err) {
-                        console.error('Error executing query', err.stack);
-                    } else {
-                        console.log('User saved:', user);
-                        this.users.push(user);
-                    }
-                }
+            const res = await this.database.query(
+                'INSERT INTO users (name, email, role) VALUES ($1, $2, $3) RETURNING *',
+                [user.name, user.email, user.getRole()],
             );
+            console.log('User created with id:', res.rows[0].id);
+            this.users.push(res.rows[0]);
         }
     }
 
-    updateUser(id, updatedUser) {
+    async updateUser(id, updatedUser) {
         if (this.database) {
-            this.database.query(
-                'UPDATE users SET name = $1, email = $2, role = $3 WHERE id = $4',
-                [updatedUser.name, updatedUser.email, updatedUser.role, id],
-                (err, res) => {
-                    if (err) {
-                        console.error('Error executing query', err.stack);
-                    } else {
-                        console.log('User updated with id:', id);
-                        this.users = this.users.map(u => u.id === id ? updatedUser : u);
-                    }
-                }
+            const res = await this.database.query(
+                'UPDATE users SET name = $1, email = $2, role = $3 WHERE id = $4 RETURNING *',
+                [updatedUser.name, updatedUser.email, updatedUser.getRole(), id],
             );
+            console.log('User updated with id:', res.rows[0].id);
+            const index = this.users.findIndex(u => u.id === id);
+            if (index !== -1) {
+                this.users[index] = res.rows[0];
+            }
         }
     }
 
-    deleteUser(id) {
+    async deleteUser(id) {
         if (this.database) {
-            this.database.query(
-                'DELETE FROM users WHERE id = $1',
+            const res = await this.database.query(
+                'DELETE FROM users WHERE id = $1 RETURNING *',
                 [id],
-                (err, res) => {
-                    if (err) {
-                        console.error('Error executing query', err.stack);
-                    } else {
-                        console.log('User deleted with id:', id);
-                        this.users = this.users.filter(u => u.id !== id);
-                    }
-                }
             );
+            console.log('User deleted with id:', res.rows[0].id);
+            this.users = this.users.filter(u => u.id !== id);
         }
     }
 
-    deleteAllUsers() {
+    async deleteAllUsers() {
         if (this.database) {
-            this.database.query(
-                'DELETE FROM users',
-                (err, res) => {
-                    if (err) {
-                        console.error('Error executing query', err.stack);
-                    } else {
-                        console.log('All users deleted');
-                        this.users = [];
-                    }
-                }
+            const res = await this.database.query(
+                'DELETE FROM users RETURNING *',
+                [id],
             );
+            console.log('User deleted with id:', res.rows[0].id);
+            this.users = this.users.filter(u => u.id !== id);
         }
     }
 }
