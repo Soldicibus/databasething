@@ -1,18 +1,11 @@
-const { useState } = require("react");
+const React = require("react");
 
-function App(data) {
-  const [filteredUsers, setFilteredUsers] = useState(data);
-  const [searchQuery, setSearchQuery] = useState("");
-
-  const handleDeleteAll = () => {};
-
-  const handleAddUser = () => {};
-
+function App({ data }) {
   return (
     <div>
       <h2>User Database</h2>
 
-      <form onSubmit={handleAddUser}>
+      <form action="/api/users" method="POST">
         <input type="text" name="name" placeholder="Name" required />
         <input type="email" name="email" placeholder="Email" required />
         <select name="role" required>
@@ -24,14 +17,24 @@ function App(data) {
         <button type="submit">Add User</button>
       </form>
 
-      <button onClick={handleDeleteAll}>Delete All</button>
+      <form
+        action="/api/users"
+        method="POST"
+        onsubmit="return confirm('Delete all users?');"
+      >
+        <input type="hidden" name="_method" value="DELETE" />
+        <button type="submit">Delete All</button>
+      </form>
 
-      <input
-        type="text"
-        placeholder="Search..."
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-      />
+      <form action="/" method="GET">
+        <input
+          type="text"
+          name="search"
+          placeholder="Search..."
+          defaultValue=""
+        />
+        <button type="submit">Search</button>
+      </form>
 
       <table border="1">
         <thead>
@@ -43,12 +46,12 @@ function App(data) {
           </tr>
         </thead>
         <tbody>
-          {filteredUsers.map((u) => (
+          {data.map((u) => (
             <tr key={u.id}>
               <td>{u.id}</td>
               <td>{u.name}</td>
               <td>{u.email}</td>
-              <td>{u.getRole()}</td>
+              <td>{u.role}</td>
             </tr>
           ))}
         </tbody>
@@ -57,4 +60,4 @@ function App(data) {
   );
 }
 
-export default App;
+module.exports = App;
