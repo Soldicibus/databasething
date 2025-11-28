@@ -1,4 +1,6 @@
-const { app } = require('./router');
+const { app } = require('./src/router');
+const db = require('./initDB');
+require('dotenv').config();
 
 const PORT = process.env.PORT ?? 5000;
 
@@ -15,5 +17,11 @@ app.get('/', (_req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  if (db == null) {
+    console.error('FATAL ERROR: Database is not initialized. Server may not function correctly.');
+  }
+  console.log(`SUCCSESS: Server running on http://localhost:${PORT}`);
+  console.log('Press CTRL+C to stop the server');
 });
+
+module.exports = db;

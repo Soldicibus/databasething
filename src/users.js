@@ -1,3 +1,7 @@
+// connecting the databse
+const db = require('../initDB');
+
+db.connect();
 let users = [];
 let userId = 0;
 

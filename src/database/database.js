@@ -1,34 +1,51 @@
 const pg = require('pg');
-const { data } = require('react-router');
-const { Client, Pool } = pg;
-const pool = new Pool();
+const { Client } = pg;
+//const pool = new Pool();
 
-class UserDatabase {
-    constructor(username, password, host, dbName) {
-        if (UserDatabase.instance) {
-            return UserDatabase.instance;
+class Database {
+    constructor(username, password, host, dbName, port = 5432) {
+        if (Database.instance) {
+            return Database.instance;
         }
         this.database = null;
-        this.users = [];
+        this.allUsers = [];
+        this.usersRole = [];
+        this.admins = [];
+        this.superadmins = [];
         this.username = username;
         this.password = password;
         this.host = host;
         this.dbName = dbName;
-        UserDatabase.instance = this;
+        this.port = port;
+        Database.instance = this;
     }
 
-    async connect(connectionString) {
-        const client = new Client({
-            user: this.username,
-            password: this.password,
-            host: this.host,
-            database: this.dbName,
-            connectionString: connectionString,
-        });
-        await client.connect();
-        this.database = client;
-        console.log('Connected to the database');
-        this.users = this.getAllUsers();
+    async connect() {
+        try {
+            const client = new Client({
+                user: this.username,
+                password: this.password,
+                host: this.host,
+                database: this.dbName,
+                port: this.port,
+            });
+            await client.connect();
+            this.database = client;
+            console.log('SUCCSESS: Connected to the database');
+            await this.database.query(`CREATE TABLE IF NOT EXISTS users (
+                id SERIAL PRIMARY KEY,
+                name VARCHAR(100) NOT NULL,
+                email VARCHAR(100) UNIQUE NOT NULL,
+                role VARCHAR(50) NOT NULL
+            );`);
+            console.log('SUCCSESS: Users table is ready');
+            await
+            this.getAllUsers();
+            return this.database;
+        } catch (err) {
+            console.error('WARNING: Database connection error, the server might not function properly', err.stack);
+            return null;
+        }
     }
 
     async getAllUsers() {
@@ -43,6 +60,20 @@ class UserDatabase {
         }
         return this.users;
     }
+
+    /*async getAllUsersRole() {
+        if (this.database) {
+            try {
+                const res = await this.database.query('SELECT * FROM users WHERE role = \'user\' OR role = \'User\'');
+                this.usersRole = res.rows;
+                console.log('Users with role User fetched:', this.usersRole);
+            }
+            catch (err) {
+                console.error('Error executing query', err.stack);
+            }
+        }
+        return this.usersRole;
+    }*/
 
 
     async getUserById(id) {
@@ -97,14 +128,11 @@ class UserDatabase {
 
     async deleteAllUsers() {
         if (this.database) {
-            const res = await this.database.query(
-                'DELETE FROM users RETURNING *',
-                [id],
-            );
+            const res = await this.database.query('DELETE FROM users RETURNING *');
             console.log('User deleted with id:', res.rows[0].id);
             this.users = this.users.filter(u => u.id !== id);
         }
     }
 }
 
-module.exports = UserDatabase;
+module.exports = Database;
