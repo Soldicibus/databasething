@@ -28,6 +28,7 @@ class UserDatabase {
         await client.connect();
         this.database = client;
         console.log('Connected to the database');
+        this.users = this.getAllUsers();
     }
 
     getAllUsers() {
@@ -45,8 +46,20 @@ class UserDatabase {
     }
 
     getUserById(id) {
-        const all = this.getAllUsers();
-        return all.find(user => user.id === id);
+        if (this.database) {
+            this.database.query(
+                'SELECT * FROM users WHERE id = $1',
+                [id],
+                (err, res) => {
+                    if (err) {
+                        console.error('Error executing query', err.stack);
+                    } else {
+                        console.log('User fetched with id:', id, res.rows[0]);
+                        return res.rows[0];
+                    }
+                }
+            );
+        }
     }
 
     createUser(user) {
@@ -61,6 +74,7 @@ class UserDatabase {
                         console.error('Error executing query', err.stack);
                     } else {
                         console.log('User saved:', user);
+                        this.users.push(user);
                     }
                 }
             );
@@ -77,6 +91,7 @@ class UserDatabase {
                         console.error('Error executing query', err.stack);
                     } else {
                         console.log('User updated with id:', id);
+                        this.users = this.users.map(u => u.id === id ? updatedUser : u);
                     }
                 }
             );
@@ -93,6 +108,7 @@ class UserDatabase {
                         console.error('Error executing query', err.stack);
                     } else {
                         console.log('User deleted with id:', id);
+                        this.users = this.users.filter(u => u.id !== id);
                     }
                 }
             );
