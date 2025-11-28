@@ -31,7 +31,7 @@ class UserDatabase {
         this.users = this.getAllUsers();
     }
 
-    getAllUsers() {
+    async getAllUsers() {
         if(this.database) {
             this.database.query('SELECT * FROM users', (err, res) => {
                 if (err) {

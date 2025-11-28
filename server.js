@@ -1,19 +1,6 @@
-const express = require('express');
-const adminRoutes = require('./routes/admin');
-const userRoutes = require('./routes/user');
-const superAdminRoutes = require('./routes/superadmin');
+const { app } = require('./router');
 
-const app = express();
 const PORT = process.env.PORT ?? 5000;
-
-app.use(express.json());
-app.use('/admin', adminRoutes);
-app.use('/user', userRoutes);
-app.use('/superadmin', superAdminRoutes);
-
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
 
 app.get('/', (_req, res) => {
   res.send(`
@@ -25,4 +12,8 @@ app.get('/', (_req, res) => {
       <li><a href="/superadmin/main">Super Admin Page</a></li>
     </ul>
   `);
+});
+
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
 });
