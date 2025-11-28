@@ -1,7 +1,7 @@
 require('dotenv').config();
-const UserDatabase = require('./src/database/userDatabase');
+const Database = require('./src/database/database');
 
-const db = new UserDatabase(
+const db = new Database(
   process.env.DB_USER,
   process.env.DB_PASSWORD,
   process.env.DB_HOST,
@@ -12,13 +12,11 @@ const db = new UserDatabase(
 (async () => {
   try {
     await db.connect();
-    if (db.database) console.log('SUCCESS: Database connection established successfully.');
+    if (db.client) console.log('SUCCESS: Database connection established successfully.');
     else console.log('ERROR: Database connection failed.');
   } catch (err) {
     console.log('ERROR: Failed to connect to the database:', err);
-    db = null;
   }
 })();
 
-
-module.exports = db;
+module.exports = {db};

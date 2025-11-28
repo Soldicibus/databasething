@@ -9,9 +9,9 @@ app.get('/', (_req, res) => {
     <h1>Express Backend</h1>
     <p>Choose a page:</p>
     <ul>
-      <li><a href="/admin/main">Admin Page</a></li>
-      <li><a href="/user/main">User Page</a></li>
-      <li><a href="/superadmin/main">Super Admin Page</a></li>
+      <li><a href="/admin/all">Admin Page</a></li>
+      <li><a href="/user/all">User Page</a></li>
+      <li><a href="/superadmin/all">Super Admin Page</a></li>
     </ul>
   `);
 });

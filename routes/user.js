@@ -1,15 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const { UserFactory } = require('../src/users');
-const db = require('../initDB');
-//const UserDatabase = require('../userDatabase');
+const { db } = require('../initDB');
 
-router.get('/users', async (_req, res) => {
+router.get('/all', async (_req, res) => {
   try {
-    const users = await db.getAllUsersRole();
+    const users = await db.getUsersOnly();
     res.json(users);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch users' });
+    res.status(500).json({ error: 'Failed to fetch users', details: err.message });
   }
 });
 
