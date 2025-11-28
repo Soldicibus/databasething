@@ -2,6 +2,7 @@ require("@babel/register")({
   presets: ["@babel/preset-env", "@babel/preset-react"],
 });
 const { app } = require("./src/router");
+const React = require("react");
 const express = require("express");
 const db = require("./initDB");
 const Users = require("./views/Users.jsx");
@@ -15,8 +16,8 @@ app.use(express.json());
 app.use(express.static("public"));
 
 app.get("/", async (req, res) => {
-  let users = await db.getUsers();
-
+  let users = db.allUsers || [];
+  console.log(db.allUsers);
   const search = req.query.search;
   if (search) {
     users = users.filter((u) =>
@@ -48,6 +49,3 @@ app.listen(PORT, () => {
   console.log(`SUCCSESS: Server running on http://localhost:${PORT}`);
   console.log("Press CTRL+C to stop the server");
 });
-
-module.exports = db;
-
