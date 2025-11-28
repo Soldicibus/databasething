@@ -19,4 +19,4 @@ const db = new Database(
   }
 })();
 
-module.exports = {db};
+module.exports = db;
