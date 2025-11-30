@@ -23,12 +23,10 @@ router.get("/:id", async (req, res) => {
 router.post("/", async (req, res) => {
   const { type, name, email, password } = req.body; // type = role
   try {
-    const factory = new UserFactory();
-    const newUser = factory.createAndPersistUser(type, name, email, password);
     const saved = await db.createUser({
-      name: newUser.name,
-      password: newUser.password,
-      email: newUser.email,
+      name: name,
+      password: password,
+      email: email,
       role: type,
     });
     res.json(saved);
