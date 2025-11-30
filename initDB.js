@@ -1,5 +1,5 @@
-require('dotenv').config();
-const Database = require('./src/database/database');
+require("dotenv").config();
+const Database = require("./src/database/database");
 
 const db = new Database(
   process.env.DB_USER,
@@ -12,10 +12,11 @@ const db = new Database(
 (async () => {
   try {
     await db.connect();
-    if (db.client) console.log('SUCCESS: Database connection established successfully.');
-    else console.log('ERROR: Database connection failed.');
+    if (db.client)
+      console.log("SUCCESS: Database connection established successfully.");
+    else console.log("ERROR: Database connection failed.");
   } catch (err) {
-    console.log('ERROR: Failed to connect to the database:', err);
+    console.log("ERROR: Failed to connect to the database:", err);
   }
 })();
 
