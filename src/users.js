@@ -13,7 +13,7 @@ class Logger {
 
   logAction(action, user) {
     const currentDate = new Date();
-    const log = `${currentDate.toISOString()} - ${user.name} виконав дію: ${action}`;
+    const log = `LOGGER: ${currentDate.toISOString()} - ${user.name} did: ${action}`;
     this.logs.push(log);
     console.log(log);
   }
@@ -97,19 +97,21 @@ class Moderator extends User {
 class SuperAdmin extends Admin {
   getRole() { return "SuperAdmin"; }
 
-  createUser(type, name, email, password) {
+  async createUser(type, name, email, password) {
     const factory = new UserFactory();
     const newUser = factory.createUser(type, name, email, password);
     users.push(newUser);
     logger.logAction(`створив ${newUser.getRole()} ${name}`, this);
     if (newUser) {
-      db.createUser({
-        id: newUser.id,
-        name: newUser.name,
-        email: newUser.email,
-        role: newUser.getRole(),
-      });
+          const saved = await db.createUser({
+          name: newUser.name,
+          email: newUser.email,
+          password: newUser.getPassword(),
+          role: newUser.getRole(),
+        });
     }
+
+    newUser.id = saved.id;
     return newUser;
   }
 }
@@ -128,6 +130,20 @@ class UserFactory {
       case "Супер Адміністратор": return new SuperAdmin(name, email, password, id);
       default: throw new Error("Невідомий тип користувача.");
     }
+  }
+  async createAndPersistUser(type, name, email, password) {
+    const factory = new UserFactory();
+    const newUser = factory.createUser(type, name, email, password);
+
+    const saved = await db.createUser({
+      name: newUser.name,
+      email: newUser.email,
+      password: newUser.getPassword(),
+      role: newUser.getRole(),
+    });
+
+    newUser.id = saved.id;
+    return newUser;
   }
 }
 

@@ -1,6 +1,30 @@
 const { Client } = require("pg");
 const readline = require('readline');
+const { User, Admin, SuperAdmin, Moderator, logger } = require('../users');
 require("dotenv").config();
+
+function mapRowToEntity(row) {
+  if (!row) return null;
+  let entity;
+  switch (row.role.toLowerCase()) {
+    case 'user':
+      entity = new User(row.name, row.email, row.password, row.id);
+      break;
+    case 'admin':
+      entity = new Admin(row.name, row.email, row.password, row.id);
+      break;
+    case 'moderator':
+      entity = new Moderator(row.name, row.email, row.password, row.id);
+      break;
+    case 'superadmin':
+      entity = new SuperAdmin(row.name, row.email, row.password, row.id);
+      break;
+    default:
+      entity = new User(row.name, row.email, row.password, row.id);
+  }
+  entity.role = row.role;
+  return entity;
+}
 
 class Database {
   constructor(
@@ -38,7 +62,7 @@ class Database {
         port: this.port,
       });
       await this.client.connect();
-      console.log("SUCCESS: Connected to the database");
+      logger.logAction("connected to database", { name: "System" });
       await this.client.query(`
         CREATE TABLE IF NOT EXISTS users (
           id SERIAL PRIMARY KEY,
@@ -48,7 +72,7 @@ class Database {
           role VARCHAR(50) NOT NULL
         );
       `);
-      console.log("SUCCESS: Users table is ready");
+      logger.logAction("CHECKED USERS", { name: "System" });
       
       await this.getAllUsers();
       if (this.allUsers.length === 0) {
@@ -58,7 +82,7 @@ class Database {
             this.createUser({ name: "admin", email: "admin@email.com", role: "Admin", password: "adminpass" });
             this.createUser({ name: "user", email: "user@user.com", role: "User", password: "userpass" });
             this.createUser({ name: "superadmin", email: "boynextdoor@gmail.cum", role: "SuperAdmin", password: "superpass" });
-            console.log("INFO: Default users added to the database.");
+            loger.logAction("додав початкових користувачів до бази даних", { name: "System" });
             this.getAllUsers();
           }
           if (userInput.trim() === "2") {
@@ -67,6 +91,7 @@ class Database {
           rl.close();
         });
       }
+      logger.logAction("connection established", { name: "System" });
       return this.client;
     } catch (err) {
       console.error("WARNING: Database connection error", err.stack);
@@ -78,8 +103,8 @@ class Database {
     if (!this.client) return [];
     try {
       const res = await this.client.query("SELECT * FROM users");
-      this.allUsers = res.rows;
-      console.log("Got all users", this.allUsers);
+      this.allUsers = res.rows.map(mapRowToEntity);
+      logger.logAction("GET all users", { name: "System" });
       return this.allUsers;
     } catch (err) {
       console.error("Error executing query", err.stack);
@@ -93,6 +118,7 @@ class Database {
       const res = await this.client.query("SELECT * FROM users WHERE id = $1", [
         id,
       ]);
+      logger.logAction(`GET users with id: ${id}`, { name: "System" });
       return res.rows[0] || null;
     } catch (err) {
       console.error("Error fetching user by id", err.stack);
@@ -106,17 +132,20 @@ class Database {
       "INSERT INTO users (name, password, email, role) VALUES ($1, $2, $3, $4) RETURNING *",
       [user.name, user.password, user.email, user.role],
     );
-    this.allUsers.push(res.rows[0]);
-    return res.rows[0];
+    logger.logAction(`created user ${user.name}`, { name: "System" }); 
+    const entity = mapRowToEntity(res.rows[0]);
+    this.allUsers.push(entity);
+    return entity;
   }
 
   async updateUser(id, updatedUser) {
     if (!this.client) return null;
     const res = await this.client.query(
-      "UPDATE users SET name = $1, email = $2, role = $3, password = $4 WHERE id = $4 RETURNING *",
+      "UPDATE users SET name = $1, email = $2, role = $3, password = $4 WHERE id = $5 RETURNING *",
       [updatedUser.name, updatedUser.email, updatedUser.role, updatedUser.password, id],
     );
-    const updated = res.rows[0];
+    const updated = mapRowToEntity(res.rows[0]);
+    logger.logAction(`updated user with id ${id}`, { name: "System" });
     this.allUsers = this.allUsers.map((u) => (u.id === id ? updated : u));
     return updated;
   }
@@ -127,6 +156,7 @@ class Database {
       "DELETE FROM users WHERE id = $1 RETURNING *",
       [id],
     );
+    logger.logAction(`deleted user with id ${id}`, { name: "System" });
     this.allUsers = this.allUsers.filter((u) => u.id !== id);
     return res.rows[0];
   }
@@ -135,6 +165,7 @@ class Database {
     if (!this.client) return [];
     const res = await this.client.query("DELETE FROM users RETURNING *");
     this.allUsers = [];
+    logger.logAction("deleted all users", { name: "System" });
     return res.rows;
   }
 
@@ -230,4 +261,3 @@ class Database {
 }
 
 module.exports = Database;
-
