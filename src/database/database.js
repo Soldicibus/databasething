@@ -1,4 +1,5 @@
 const { Client } = require("pg");
+const readline = require('readline');
 require("dotenv").config();
 
 class Database {
@@ -25,6 +26,10 @@ class Database {
 
   async connect() {
     try {
+      const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+      });
       this.client = new Client({
         user: this.user,
         password: this.password,
@@ -34,18 +39,34 @@ class Database {
       });
       await this.client.connect();
       console.log("SUCCESS: Connected to the database");
-
       await this.client.query(`
         CREATE TABLE IF NOT EXISTS users (
           id SERIAL PRIMARY KEY,
           name VARCHAR(100) NOT NULL,
+          password VARCHAR(100) NOT NULL,
           email VARCHAR(100) UNIQUE NOT NULL,
           role VARCHAR(50) NOT NULL
         );
       `);
       console.log("SUCCESS: Users table is ready");
-
+      
       await this.getAllUsers();
+      if (this.allUsers.length === 0) {
+        console.log("INFO: No users found in database.");
+        rl.question('Add users? 1-yes 2-no: ', (userInput) => {
+          if (userInput.trim() === "1") {
+            this.createUser({ name: "admin", email: "admin@email.com", role: "Admin", password: "adminpass" });
+            this.createUser({ name: "user", email: "user@user.com", role: "User", password: "userpass" });
+            this.createUser({ name: "superadmin", email: "boynextdoor@gmail.cum", role: "SuperAdmin", password: "superpass" });
+            console.log("INFO: Default users added to the database.");
+            this.getAllUsers();
+          }
+          if (userInput.trim() === "2") {
+            console.log("INFO: No users were added. Proceeding without users.");
+          }
+          rl.close();
+        });
+      }
       return this.client;
     } catch (err) {
       console.error("WARNING: Database connection error", err.stack);
@@ -82,8 +103,8 @@ class Database {
   async createUser(user) {
     if (!this.client) return null;
     const res = await this.client.query(
-      "INSERT INTO users (name, email, role) VALUES ($1, $2, $3) RETURNING *",
-      [user.name, user.email, user.role],
+      "INSERT INTO users (name, password, email, role) VALUES ($1, $2, $3, $4) RETURNING *",
+      [user.name, user.password, user.email, user.role],
     );
     this.allUsers.push(res.rows[0]);
     return res.rows[0];
@@ -92,8 +113,8 @@ class Database {
   async updateUser(id, updatedUser) {
     if (!this.client) return null;
     const res = await this.client.query(
-      "UPDATE users SET name = $1, email = $2, role = $3 WHERE id = $4 RETURNING *",
-      [updatedUser.name, updatedUser.email, updatedUser.role, id],
+      "UPDATE users SET name = $1, email = $2, role = $3, password = $4 WHERE id = $4 RETURNING *",
+      [updatedUser.name, updatedUser.email, updatedUser.role, updatedUser.password, id],
     );
     const updated = res.rows[0];
     this.allUsers = this.allUsers.map((u) => (u.id === id ? updated : u));

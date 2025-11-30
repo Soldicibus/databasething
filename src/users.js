@@ -130,3 +130,12 @@ class UserFactory {
     }
   }
 }
+
+module.exports = {
+  User,
+  Admin,
+  Moderator,
+  SuperAdmin,
+  UserFactory,
+  logger,
+};
