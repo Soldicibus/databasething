@@ -1,14 +1,12 @@
-const express = require('express');
-const adminRoutes = require('../routes/admin');
-const userRoutes = require('../routes/user');
-const superAdminRoutes = require('../routes/superadmin');
+const { Router } = require("express");
+const adminRoutes = require("../routes/admin");
+const userRoutes = require("../routes/user");
+const superAdminRoutes = require("../routes/superadmin");
 
-const app = express();
+const router = Router();
 
-app.use(express.json());
+router.use("/api/admin", adminRoutes);
+router.use("/api/user", userRoutes);
+router.use("/api/superadmin", superAdminRoutes);
 
-app.use('/admin', adminRoutes);
-app.use('/user', userRoutes);
-app.use('/superadmin', superAdminRoutes);
-
-module.exports = { app };
+module.exports = router;

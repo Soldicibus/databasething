@@ -1,19 +1,23 @@
 require("@babel/register")({
   presets: ["@babel/preset-env", "@babel/preset-react"],
 });
-const { app } = require("./src/router");
 const React = require("react");
 const express = require("express");
 const db = require("./initDB");
 const Users = require("./views/Users.jsx");
+const APIRouter = require("./src/router.js");
 const { renderToString } = require("react-dom/server");
 require("dotenv").config();
+
+const app = express();
 
 const PORT = process.env.PORT ?? 5000;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static("public"));
+
+app.use(APIRouter);
 
 app.get("/", async (req, res) => {
   let users = db.allUsers || [];

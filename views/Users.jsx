@@ -8,7 +8,13 @@ function App({ data }) {
       <form action="/api/users" method="POST">
         <input type="text" name="name" placeholder="Name" required />
         <input type="email" name="email" placeholder="Email" required />
-        <select name="role" required>
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          required
+        />
+        <select name="type" required>
           <option value="User">User</option>
           <option value="Admin">Admin</option>
           <option value="Moderator">Moderator</option>
@@ -18,7 +24,7 @@ function App({ data }) {
       </form>
 
       <form
-        action="/api/users"
+        action="/api/users/"
         method="POST"
         onsubmit="return confirm('Delete all users?');"
       >
