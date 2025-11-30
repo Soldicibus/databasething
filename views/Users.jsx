@@ -5,7 +5,7 @@ function App({ data }) {
     <div>
       <h2>User Database</h2>
 
-      <form action="/api/users" method="POST">
+      <form action="/api/user" method="POST">
         <input type="text" name="name" placeholder="Name" required />
         <input type="email" name="email" placeholder="Email" required />
         <input
@@ -24,7 +24,7 @@ function App({ data }) {
       </form>
 
       <form
-        action="/api/users/"
+        action="/api/user/"
         method="POST"
         onsubmit="return confirm('Delete all users?');"
       >
