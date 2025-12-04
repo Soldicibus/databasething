@@ -46,6 +46,7 @@ const Admins = ({ data }) => {
           </tr>
         </thead>
         <tbody>
+<<<<<<< HEAD:views/Admins.jsx
           {data.map((u) => (
             <tr key={u.id}>
               <td>{u.id}</td>
@@ -58,6 +59,14 @@ const Admins = ({ data }) => {
                   <button type="submit">Delete</button>
                 </form>
               </td>
+=======
+          {data.map((item) => (
+            <tr key={item.id}>
+              <td>{item.id}</td>
+              <td>{item.name}</td>
+              <td>{item.email}</td>
+              <td>{item.role}</td>
+>>>>>>> d69ec37c9f6c15490089a93b88e97d6e06841907:src/views/Admins.jsx
             </tr>
           ))}
         </tbody>

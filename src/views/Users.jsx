@@ -1,6 +1,30 @@
 const React = require("react");
 
+<<<<<<< HEAD:views/Users.jsx
 function App({ data }) {
+=======
+function Users({ data }) {
+  const addUser = async (e) => {
+    e.preventDefault();
+
+    const form = e.target;
+    const formData = new FormData(form);
+
+    const user = Object.fromEntries(formData.entries());
+
+    console.log(user);
+
+    await fetch("/api/user/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(user),
+    });
+
+    form.reset();
+  };
+>>>>>>> d69ec37c9f6c15490089a93b88e97d6e06841907:src/views/Users.jsx
   return (
     <div>
       <h2>User Database</h2>
@@ -48,6 +72,7 @@ function App({ data }) {
           </tr>
         </thead>
         <tbody>
+<<<<<<< HEAD:views/Users.jsx
           {data.map((u) => (
             <tr key={u.id}>
               <td>{u.id}</td>
@@ -60,6 +85,14 @@ function App({ data }) {
                   <button type="submit">Delete</button>
                 </form>
               </td>
+=======
+          {data.map((item) => (
+            <tr key={item.id}>
+              <td>{item.id}</td>
+              <td>{item.name}</td>
+              <td>{item.email}</td>
+              <td>{item.role}</td>
+>>>>>>> d69ec37c9f6c15490089a93b88e97d6e06841907:src/views/Users.jsx
             </tr>
           ))}
         </tbody>
@@ -68,4 +101,4 @@ function App({ data }) {
   );
 }
 
-module.exports = App;
+module.exports = Users;
