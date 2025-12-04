@@ -1,6 +1,6 @@
 const React = require("react");
 
-function App({ data }) {
+function Users({ data }) {
   const addUser = async (e) => {
     e.preventDefault();
 
@@ -68,12 +68,12 @@ function App({ data }) {
           </tr>
         </thead>
         <tbody>
-          {data.map((u) => (
-            <tr key={u.id}>
-              <td>{u.id}</td>
-              <td>{u.name}</td>
-              <td>{u.email}</td>
-              <td>{u.role}</td>
+          {data.map((item) => (
+            <tr key={item.id}>
+              <td>{item.id}</td>
+              <td>{item.name}</td>
+              <td>{item.email}</td>
+              <td>{item.role}</td>
             </tr>
           ))}
         </tbody>
@@ -82,4 +82,4 @@ function App({ data }) {
   );
 }
 
-module.exports = App;
+module.exports = Users;

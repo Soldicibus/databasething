@@ -47,12 +47,12 @@ const Admins = ({ data }) => {
           </tr>
         </thead>
         <tbody>
-          {data.map((u) => (
-            <tr key={u.id}>
-              <td>{u.id}</td>
-              <td>{u.name}</td>
-              <td>{u.email}</td>
-              <td>{u.role}</td>
+          {data.map((item) => (
+            <tr key={item.id}>
+              <td>{item.id}</td>
+              <td>{item.name}</td>
+              <td>{item.email}</td>
+              <td>{item.role}</td>
             </tr>
           ))}
         </tbody>

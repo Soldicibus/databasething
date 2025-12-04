@@ -1,13 +1,18 @@
+import { Link, Route, Router } from "react-router-dom";
+
 const React = require("react");
 const App = ({ children }) => {
   return (
     <div>
       <nav style={{ marginBottom: 20 }}>
-        <a href="/">Home</a> | <a href="/users">Users</a> |{" "}
-        <a href="/admin">Admins</a>
-        <a href="/admin">SuperAdmins</a>
+        <Link to="/users">Users</Link> |<Link to="/admins">Admins</Link> |
+        <Link to="/super_admins">Super Admins</Link>
       </nav>
-      {children}
+      <Router>
+        <Route path="/users"></Route>
+        <Route path="/admins"></Route>
+        <Route path="/super_admins"></Route>
+      </Router>
     </div>
   );
 };
