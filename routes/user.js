@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const { UserFactory } = require("../src/users");
+const React = require("react");
+const { renderToString } = require("react-dom/server");
+const Users = require("../views/Users.jsx");
 const db = require("../initDB");
 
 router.get("/all", async (_req, res) => {
@@ -12,6 +14,32 @@ router.get("/all", async (_req, res) => {
       .status(500)
       .json({ error: "Failed to fetch users", details: err.message });
   }
+});
+
+router.get("/", async (req, res) => {
+  let users = db.allUsers || [];
+  console.log(db.allUsers);
+  const search = req.query.search;
+  if (search) {
+    users = users.filter((u) =>
+      u.name.toLowerCase().includes(search.toLowerCase()),
+    );
+  }
+
+  const appHTML = renderToString(React.createElement(Users, { data: users }));
+
+  res.send(`
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>User Database</title>
+        <link rel="stylesheet" href="/style.css" />
+      </head>
+      <body>
+        <div id="root">${appHTML}</div>
+      </body>
+    </html>
+  `);
 });
 
 router.get("/:id", async (req, res) => {

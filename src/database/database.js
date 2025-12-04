@@ -82,7 +82,7 @@ class Database {
             this.createUser({ name: "admin", email: "admin@email.com", role: "Admin", password: "adminpass" });
             this.createUser({ name: "user", email: "user@user.com", role: "User", password: "userpass" });
             this.createUser({ name: "superadmin", email: "boynextdoor@gmail.cum", role: "SuperAdmin", password: "superpass" });
-            loger.logAction("додав початкових користувачів до бази даних", { name: "System" });
+            logger.logAction("додав початкових користувачів до бази даних", { name: "System" });
             this.getAllUsers();
           }
           if (userInput.trim() === "2") {
@@ -112,7 +112,7 @@ class Database {
     }
   }
 
-  async getUserById(id) {
+  async getAnyUserById(id) {
     if (!this.client) return null;
     try {
       const res = await this.client.query("SELECT * FROM users WHERE id = $1", [
@@ -132,7 +132,7 @@ class Database {
       "INSERT INTO users (name, password, email, role) VALUES ($1, $2, $3, $4) RETURNING *",
       [user.name, user.password, user.email, user.role],
     );
-    logger.logAction(`created user ${user.name}`, { name: "System" }); 
+    logger.logAction(`created user: ${user.name}, ${user.password}, ${user.email}, ${user.role}`, { name: "System" }); 
     const entity = mapRowToEntity(res.rows[0]);
     this.allUsers.push(entity);
     return entity;
@@ -176,7 +176,7 @@ class Database {
           "SELECT * FROM users WHERE role = 'Admin' OR role = 'admin'",
         );
         this.admins = res.rows;
-        console.log("Admins fetched:", this.admins);
+        logger.logAction("Admins fetched", { name: "System" });
         return this.admins;
       } catch (err) {
         console.error("Error executing query", err.stack);
@@ -207,7 +207,7 @@ class Database {
         "SELECT * FROM users WHERE role = 'User'",
       );
       this.users = res.rows;
-      console.log("Got all users with user role", this.users);
+      logger.logAction("Users fetched", { name: "System" });
       return this.users || [];
     } catch (err) {
       console.error("Error executing query", err.stack);
@@ -228,6 +228,7 @@ class Database {
       return null;
     }
   }
+  
   async getSuperAdminsOnly() {
     if (this.client) {
       try {
@@ -235,7 +236,7 @@ class Database {
           "SELECT * FROM users WHERE role = 'SuperAdmin' OR role = 'superadmin'",
         );
         this.superadmins = res.rows;
-        console.log("SuperAdmins fetched:", this.superadmins);
+        logger.logAction("SuperAdmins fetched", { name: "System" });
         return this.superadmins;
       } catch (err) {
         console.error("Error executing query", err.stack);

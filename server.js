@@ -19,6 +19,7 @@ app.use(express.static("public"));
 
 app.use(APIRouter);
 
+<<<<<<< Updated upstream
 app.get("/", async (req, res) => {
   let users = db.allUsers || [];
   const search = req.query.search;
@@ -43,6 +44,8 @@ app.get("/", async (req, res) => {
     </html>
   `);
 });
+=======
+>>>>>>> Stashed changes
 app.listen(PORT, () => {
   if (db == null) {
     console.error(
