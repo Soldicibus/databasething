@@ -9,6 +9,8 @@ function App({ data }) {
 
     const user = Object.fromEntries(formData.entries());
 
+    console.log(user);
+
     await fetch("/api/user/", {
       method: "POST",
       headers: {
@@ -23,7 +25,7 @@ function App({ data }) {
     <div>
       <h2>User Database</h2>
 
-      <form onSubmit={addUser}>
+      <form onSubmit={addUser} method="POST">
         <input type="text" name="name" placeholder="Name" required />
         <input type="email" name="email" placeholder="Email" required />
         <input
