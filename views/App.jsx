@@ -1,7 +1,10 @@
-import { Link, Route, Router } from "react-router-dom";
-
 const React = require("react");
-const App = ({ children }) => {
+const { Link, Route, Router } = require("react-router-dom");
+const Users = require("./Users.jsx");
+const Admins = require("./Admins.jsx");
+const SuperAdmins = require("./SuperAdmins.jsx");
+
+const App = () => {
   return (
     <div>
       <nav style={{ marginBottom: 20 }}>
@@ -9,9 +12,9 @@ const App = ({ children }) => {
         <Link to="/super_admins">Super Admins</Link>
       </nav>
       <Router>
-        <Route path="/users"></Route>
-        <Route path="/admins"></Route>
-        <Route path="/super_admins"></Route>
+        <Route path="/users" element={Users} />
+        <Route path="/admins" element={Admins} />
+        <Route path="/super_admins" element={SuperAdmins} />
       </Router>
     </div>
   );
