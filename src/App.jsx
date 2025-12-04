@@ -1,8 +1,8 @@
 const React = require("react");
 const { Link, Route, Router } = require("react-router-dom");
-const Users = require("./Users.jsx");
-const Admins = require("./Admins.jsx");
-const SuperAdmins = require("./SuperAdmins.jsx");
+const Users = require("./views/Users.jsx");
+const Admins = require("./views/Admins.jsx");
+const SuperAdmins = require("./views/SuperAdmins.jsx");
 
 const App = () => {
   return (

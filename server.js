@@ -4,9 +4,10 @@ require("@babel/register")({
 const React = require("react");
 const express = require("express");
 const db = require("./initDB");
-const Users = require("./views/Users.jsx");
+const App = require("./views/App.jsx");
 const APIRouter = require("./src/router.js");
 const { renderToString } = require("react-dom/server");
+const { StaticRouter } = require("react-router-dom/server");
 require("dotenv").config();
 
 const app = express();
@@ -19,6 +20,30 @@ app.use(express.static("public"));
 
 app.use(APIRouter);
 
+app.get("*", (req, res) => {
+  const context = {};
+  const appHTML = renderToString(
+    <StaticRouter location={req.url} context={context}>
+      <App />
+    </StaticRouter>,
+  );
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>React SSR</title>
+      </head>
+      <body>
+        <div id="root">${appHtml}</div>
+        <script src="/client.bundle.js"></script>
+      </body>
+    </html>
+  `;
+
+  res.send(html);
+});
+
 app.get("/", async (req, res) => {
   let users = db.allUsers || [];
   const search = req.query.search;
@@ -27,21 +52,6 @@ app.get("/", async (req, res) => {
       u.name.toLowerCase().includes(search.toLowerCase()),
     );
   }
-
-  const appHTML = renderToString(React.createElement(Users, { data: users }));
-
-  res.send(`
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <title>User Database</title>
-        <link rel="stylesheet" href="/style.css" />
-      </head>
-      <body>
-        <div id="root">${appHTML}</div>
-      </body>
-    </html>
-  `);
 });
 app.listen(PORT, () => {
   if (db == null) {
