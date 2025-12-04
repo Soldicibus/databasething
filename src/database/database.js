@@ -1,6 +1,7 @@
-const { Client } = require("pg");
-const readline = require('readline');
-const { User, Admin, SuperAdmin, Moderator, logger } = require('../users');
+import { Client } from "pg";
+import readline from "readline";
+import { User, Admin, Moderator, SuperAdmin } from "../src/users.js";
+import { logger } from "../src/users.js";
 require("dotenv").config();
 
 function mapRowToEntity(row) {
@@ -26,7 +27,7 @@ function mapRowToEntity(row) {
   return entity;
 }
 
-class Database {
+export class Database {
   constructor(
     user = process.env.DB_USER,
     password = process.env.DB_PASSWORD,
@@ -233,5 +234,3 @@ class Database {
     }
   }
 }
-
-module.exports = Database;

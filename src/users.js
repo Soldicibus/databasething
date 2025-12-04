@@ -1,10 +1,10 @@
 // connecting the databse
-const db = require('../initDB');
+import { db } from "./database/database"
 
 let users = [];
 let userId = 0;
 
-class Logger {
+export class Logger {
   constructor() {
     if (!Logger.instance) Logger.instance = this;
     this.logs = [];
@@ -23,9 +23,9 @@ class Logger {
   }
 }
 
-const logger = new Logger();
+export const logger = new Logger();
 
-class User {
+export class User {
   #password;
   constructor(name, email, password, id = null) {
     this.id = id ?? userId++;
@@ -55,7 +55,7 @@ class User {
   getPassword() { return this.#password; }
 }
 
-class Admin extends User {
+export class Admin extends User {
   getRole() { return "Admin"; }
 
   deleteUser(user_t) {
@@ -70,7 +70,7 @@ class Admin extends User {
   }
 }
 
-class Moderator extends User {
+export class Moderator extends User {
   constructor(name, email, password, id = null) {
     super(name, email, password, id);
     this.mutedUsers = new Map();
@@ -94,7 +94,7 @@ class Moderator extends User {
   }
 }
 
-class SuperAdmin extends Admin {
+export class SuperAdmin extends Admin {
   getRole() { return "SuperAdmin"; }
 
   async createUser(type, name, email, password) {
@@ -116,7 +116,7 @@ class SuperAdmin extends Admin {
   }
 }
 
-class UserFactory {
+export class UserFactory {
   createUser(type, name, email, password, id = null) {
     switch (type) {
       case "User": return new User(name, email, password, id);
@@ -146,12 +146,3 @@ class UserFactory {
     return newUser;
   }
 }
-
-module.exports = {
-  User,
-  Admin,
-  Moderator,
-  SuperAdmin,
-  UserFactory,
-  logger,
-};

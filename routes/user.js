@@ -1,9 +1,8 @@
-const express = require("express");
-const router = express.Router();
-const React = require("react");
-const { renderToString } = require("react-dom/server");
-const Users = require("../views/Users.jsx");
-const db = require("../initDB");
+import express from "express";
+import React from "react";
+import { renderToString } from "react-dom/server";
+import { db } from "../initDB.js";
+import Users from "../src/components/Users.js";
 
 router.get("/all", async (_req, res) => {
   try {
@@ -16,7 +15,7 @@ router.get("/all", async (_req, res) => {
   }
 });
 
-router.get("/", async (req, res) => {
+/*router.get("/", async (req, res) => {
   const users = await db.getUsersOnly() || [];
   console.log(db.allUsers);
   const search = req.query.search;
@@ -40,7 +39,7 @@ router.get("/", async (req, res) => {
       </body>
     </html>
   `);
-});
+});*/
 
 router.get("/:id", async (req, res) => {
   const user = await db.getUserById(req.params.id);

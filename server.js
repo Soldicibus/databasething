@@ -1,15 +1,9 @@
-require("@babel/register")({
-  presets: ["@babel/preset-react", "@babel/preset-env"],
-  extensions: [".js", ".jsx"],
-});
-
-const express = require("express");
-const React = require("react");
-const { renderToString } = require("react-dom/server");
-const { StaticRouter } = require("react-router-dom");
-
-const App = require("./src/App.jsx").default;
-const APIRouter = require("./src/router.js");
+import express from "express";
+import React from "react";
+import { renderToString } from "react-dom/server";
+import { StaticRouter } from "react-router-dom/server";
+import App from "./src/App.js";
+import router from "./src/router.js";
 require("dotenv").config();
 
 const app = express();
@@ -18,9 +12,9 @@ const PORT = process.env.PORT ?? 5000;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static("public"));
-app.use(APIRouter);
+app.use(router);
 
-app.get("*", (req, res) => {
+/*app.get("*", (req, res) => {
   const context = {};
 
   const markup = renderToString(
@@ -41,8 +35,10 @@ app.get("*", (req, res) => {
       </body>
     </html>
   `);
-});
+});*/
 
 app.listen(PORT, () => {
   console.log(`SUCCESS: Server running on http://localhost:${PORT}`);
 });
+
+export default app;

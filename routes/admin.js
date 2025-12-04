@@ -16,7 +16,7 @@ router.get("/all", async (_req, res) => {
   }
 });
 
-router.get("/", async (req, res) => {
+/*router.get("/", async (req, res) => {
   const admins = await db.getAdminsOnly() || [];
   console.log(db.admins);
   const search = req.query.search;
@@ -40,7 +40,7 @@ router.get("/", async (req, res) => {
       </body>
     </html>
   `);
-});
+});*/
 
 router.get("/:id", async (req, res) => {
   try {

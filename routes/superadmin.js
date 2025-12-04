@@ -16,7 +16,7 @@ router.get("/all", async (_req, res) => {
   }
 });
 
-router.get("/", async (req, res) => {
+/*router.get("/", async (req, res) => {
   const superAdmins = await db.getSuperAdminsOnly() || [];
   console.log(db.superAdmins);
   const search = req.query.search;
@@ -40,7 +40,7 @@ router.get("/", async (req, res) => {
       </body>
     </html>
   `);
-});
+});*/
 
 router.get("/:id", async (req, res) => {
   try {

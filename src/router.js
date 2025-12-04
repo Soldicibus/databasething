@@ -1,12 +1,10 @@
-const { Router } = require("express");
-const adminRoutes = require("../routes/admin");
-const userRoutes = require("../routes/user");
-const superAdminRoutes = require("../routes/superadmin");
+import express from "express";
+import adminRoutes from "../routes/admin.js";
+import userRoutes from "../routes/user.js";
+import superAdminRoutes from "../routes/superadmin.js";
 
-const router = Router();
+export const router = express.Router();
 
 router.use("/api/admin", adminRoutes);
 router.use("/api/user", userRoutes);
 router.use("/api/superadmin", superAdminRoutes);
-
-module.exports = router;

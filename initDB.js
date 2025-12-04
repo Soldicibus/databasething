@@ -1,7 +1,7 @@
 require("dotenv").config();
-const Database = require("./src/database/database");
+import { Database } from "src/database/database.js";
 
-const db = new Database(
+export const db = new Database(
   process.env.DB_USER,
   process.env.DB_PASSWORD,
   process.env.DB_HOST,
@@ -19,5 +19,3 @@ const db = new Database(
     console.log("ERROR: Failed to connect to the database:", err);
   }
 })();
-
-module.exports = db;
