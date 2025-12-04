@@ -21,7 +21,6 @@ app.use(APIRouter);
 
 app.get("/", async (req, res) => {
   let users = db.allUsers || [];
-  console.log(db.allUsers);
   const search = req.query.search;
   if (search) {
     users = users.filter((u) =>
