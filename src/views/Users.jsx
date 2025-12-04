@@ -1,9 +1,14 @@
 const React = require("react");
 
+<<<<<<< HEAD
 <<<<<<< HEAD:views/Users.jsx
 function App({ data }) {
 =======
 function Users({ data }) {
+=======
+function Users() {
+  const [someArr, setSomeArr] = React.useState([]);
+>>>>>>> e665d28aeb6fa39a038b044af980f63dddc39a1a
   const addUser = async (e) => {
     e.preventDefault();
 
@@ -72,6 +77,7 @@ function Users({ data }) {
           </tr>
         </thead>
         <tbody>
+<<<<<<< HEAD
 <<<<<<< HEAD:views/Users.jsx
           {data.map((u) => (
             <tr key={u.id}>
@@ -87,6 +93,9 @@ function Users({ data }) {
               </td>
 =======
           {data.map((item) => (
+=======
+          {someArr.map((item) => (
+>>>>>>> e665d28aeb6fa39a038b044af980f63dddc39a1a
             <tr key={item.id}>
               <td>{item.id}</td>
               <td>{item.name}</td>
