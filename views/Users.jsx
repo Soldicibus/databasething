@@ -1,15 +1,29 @@
 const React = require("react");
 
 function App({ data }) {
-  const addUser = (formData) => {};
-  const searchUser = (fomrmData) => {};
-  const deleteUser = (formData) => {};
-  const deleteAllUsers = (formData) => {};
+  const addUser = async (e) => {
+    e.preventDefault();
+
+    const form = e.target;
+    const formData = new FormData(form);
+
+    const user = Object.fromEntries(formData.entries());
+
+    await fetch("/api/user/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(user),
+    });
+
+    form.reset();
+  };
   return (
     <div>
       <h2>User Database</h2>
 
-      <form action="/api/user" method="POST">
+      <form onSubmit={addUser}>
         <input type="text" name="name" placeholder="Name" required />
         <input type="email" name="email" placeholder="Email" required />
         <input
