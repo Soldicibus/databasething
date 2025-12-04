@@ -23,11 +23,7 @@ function App({ data }) {
         <button type="submit">Add User</button>
       </form>
 
-      <form
-        action="/api/user/"
-        method="POST"
-        onsubmit="return confirm('Delete all users?');"
-      >
+      <form action="/api/user/" method="POST">
         <input type="hidden" name="_method" value="DELETE" />
         <button type="submit">Delete All</button>
       </form>
