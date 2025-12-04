@@ -1,6 +1,10 @@
 const React = require("react");
 
 function App({ data }) {
+  const addUser = (formData) => {};
+  const searchUser = (fomrmData) => {};
+  const deleteUser = (formData) => {};
+  const deleteAllUsers = (formData) => {};
   return (
     <div>
       <h2>User Database</h2>
