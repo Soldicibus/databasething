@@ -1,14 +1,7 @@
 const React = require("react");
 
-<<<<<<< HEAD
-<<<<<<< HEAD:views/Users.jsx
-function App({ data }) {
-=======
-function Users({ data }) {
-=======
 function Users() {
   const [someArr, setSomeArr] = React.useState([]);
->>>>>>> e665d28aeb6fa39a038b044af980f63dddc39a1a
   const addUser = async (e) => {
     e.preventDefault();
 
@@ -29,7 +22,6 @@ function Users() {
 
     form.reset();
   };
->>>>>>> d69ec37c9f6c15490089a93b88e97d6e06841907:src/views/Users.jsx
   return (
     <div>
       <h2>User Database</h2>
@@ -77,8 +69,6 @@ function Users() {
           </tr>
         </thead>
         <tbody>
-<<<<<<< HEAD
-<<<<<<< HEAD:views/Users.jsx
           {data.map((u) => (
             <tr key={u.id}>
               <td>{u.id}</td>
@@ -91,17 +81,6 @@ function Users() {
                   <button type="submit">Delete</button>
                 </form>
               </td>
-=======
-          {data.map((item) => (
-=======
-          {someArr.map((item) => (
->>>>>>> e665d28aeb6fa39a038b044af980f63dddc39a1a
-            <tr key={item.id}>
-              <td>{item.id}</td>
-              <td>{item.name}</td>
-              <td>{item.email}</td>
-              <td>{item.role}</td>
->>>>>>> d69ec37c9f6c15490089a93b88e97d6e06841907:src/views/Users.jsx
             </tr>
           ))}
         </tbody>
