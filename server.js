@@ -19,33 +19,6 @@ app.use(express.static("public"));
 
 app.use(APIRouter);
 
-<<<<<<< Updated upstream
-app.get("/", async (req, res) => {
-  let users = db.allUsers || [];
-  const search = req.query.search;
-  if (search) {
-    users = users.filter((u) =>
-      u.name.toLowerCase().includes(search.toLowerCase()),
-    );
-  }
-
-  const appHTML = renderToString(React.createElement(Users, { data: users }));
-
-  res.send(`
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <title>User Database</title>
-        <link rel="stylesheet" href="/style.css" />
-      </head>
-      <body>
-        <div id="root">${appHTML}</div>
-      </body>
-    </html>
-  `);
-});
-=======
->>>>>>> Stashed changes
 app.listen(PORT, () => {
   if (db == null) {
     console.error(

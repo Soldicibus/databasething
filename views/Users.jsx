@@ -1,31 +1,10 @@
 const React = require("react");
 
 function App({ data }) {
-  const addUser = async (e) => {
-    e.preventDefault();
-
-    const form = e.target;
-    const formData = new FormData(form);
-
-    const user = Object.fromEntries(formData.entries());
-
-    console.log(user);
-
-    await fetch("/api/user/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(user),
-    });
-
-    form.reset();
-  };
   return (
     <div>
       <h2>User Database</h2>
-
-      <form onSubmit={addUser} method="POST">
+      <form action="/api/user/" method="POST">
         <input type="text" name="name" placeholder="Name" required />
         <input type="email" name="email" placeholder="Email" required />
         <input
@@ -65,6 +44,7 @@ function App({ data }) {
             <th>Name</th>
             <th>Email</th>
             <th>Role</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -74,6 +54,12 @@ function App({ data }) {
               <td>{u.name}</td>
               <td>{u.email}</td>
               <td>{u.role}</td>
+              <td>
+                <form action={`/api/user/${u.id}`} method="POST" style={{ display: 'inline' }}>
+                  <input type="hidden" name="_method" value="DELETE" />
+                  <button type="submit">Delete</button>
+                </form>
+              </td>
             </tr>
           ))}
         </tbody>

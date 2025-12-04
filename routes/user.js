@@ -17,7 +17,7 @@ router.get("/all", async (_req, res) => {
 });
 
 router.get("/", async (req, res) => {
-  let users = db.allUsers || [];
+  const users = await db.getUsersOnly() || [];
   console.log(db.allUsers);
   const search = req.query.search;
   if (search) {

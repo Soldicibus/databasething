@@ -1,8 +1,11 @@
 const express = require("express");
 const router = express.Router();
+const React = require("react");
+const { renderToString } = require("react-dom/server");
+const Users = require("../views/SuperAdmins.jsx");
 const db = require("../initDB");
 
-router.get("/", async (_req, res) => {
+router.get("/all", async (_req, res) => {
   try {
     const superadmins = await db.getSuperAdminsOnly();
     res.json(superadmins);
@@ -11,6 +14,32 @@ router.get("/", async (_req, res) => {
       .status(500)
       .json({ error: "Failed to fetch superadmins", details: err.message });
   }
+});
+
+router.get("/", async (req, res) => {
+  const superAdmins = await db.getSuperAdminsOnly() || [];
+  console.log(db.superAdmins);
+  const search = req.query.search;
+  if (search) {
+    superAdmins = superAdmins.filter((u) =>
+      u.name.toLowerCase().includes(search.toLowerCase()),
+    );
+  }
+
+  const appHTML = renderToString(React.createElement(Users, { data: superAdmins }));
+
+  res.send(`
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>SuperAdmin Database</title>
+        <link rel="stylesheet" href="/style.css" />
+      </head>
+      <body>
+        <div id="root">${appHTML}</div>
+      </body>
+    </html>
+  `);
 });
 
 router.get("/:id", async (req, res) => {

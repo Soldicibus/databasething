@@ -1,10 +1,11 @@
 const React = require("react");
+
 const Admins = ({ data }) => {
   return (
     <div>
       <h2>Admin Database</h2>
 
-      <form onSubmit="" method="POST">
+      <form action="/api/user/" method="POST">
         <input type="text" name="name" placeholder="Name" required />
         <input type="email" name="email" placeholder="Email" required />
         <input
@@ -14,12 +15,9 @@ const Admins = ({ data }) => {
           required
         />
         <select name="type" required>
-          <option value="User">User</option>
           <option value="Admin">Admin</option>
-          <option value="Moderator">Moderator</option>
-          <option value="SuperAdmin">Super Admin</option>
         </select>
-        <button type="submit">Add User</button>
+        <button type="submit">Add Admin</button>
       </form>
 
       <form action="/api/user/" method="POST">
@@ -44,6 +42,7 @@ const Admins = ({ data }) => {
             <th>Name</th>
             <th>Email</th>
             <th>Role</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -53,6 +52,12 @@ const Admins = ({ data }) => {
               <td>{u.name}</td>
               <td>{u.email}</td>
               <td>{u.role}</td>
+              <td>
+                <form action={`/api/user/${u.id}`} method="POST" style={{ display: 'inline' }}>
+                  <input type="hidden" name="_method" value="DELETE" />
+                  <button type="submit">Delete</button>
+                </form>
+              </td>
             </tr>
           ))}
         </tbody>

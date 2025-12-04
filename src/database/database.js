@@ -75,6 +75,8 @@ class Database {
       logger.logAction("CHECKED USERS", { name: "System" });
       
       await this.getAllUsers();
+      await this.getAdminsOnly();
+      await this.getSuperAdminsOnly();
       if (this.allUsers.length === 0) {
         console.log("INFO: No users found in database.");
         rl.question('Add users? 1-yes 2-no: ', (userInput) => {
@@ -112,7 +114,7 @@ class Database {
     }
   }
 
-  async getAnyUserById(id) {
+  async getUserById(id) {
     if (!this.client) return null;
     try {
       const res = await this.client.query("SELECT * FROM users WHERE id = $1", [
@@ -199,35 +201,6 @@ class Database {
       }
     }
   }
-
-  async getUsersOnly() {
-    if (!this.client) return [];
-    try {
-      const res = await this.client.query(
-        "SELECT * FROM users WHERE role = 'User'",
-      );
-      this.users = res.rows;
-      logger.logAction("Users fetched", { name: "System" });
-      return this.users || [];
-    } catch (err) {
-      console.error("Error executing query", err.stack);
-      return ["PISHOV NAHUY"];
-    }
-  }
-
-  async getUserById(id) {
-    if (!this.client) return null;
-    try {
-      const res = await this.client.query(
-        "SELECT * FROM users WHERE id = $1 AND role = 'User'",
-        [id],
-      );
-      return res.rows[0] || null;
-    } catch (err) {
-      console.error("Error fetching user by id", err.stack);
-      return null;
-    }
-  }
   
   async getSuperAdminsOnly() {
     if (this.client) {
@@ -236,7 +209,7 @@ class Database {
           "SELECT * FROM users WHERE role = 'SuperAdmin' OR role = 'superadmin'",
         );
         this.superadmins = res.rows;
-        logger.logAction("SuperAdmins fetched", { name: "System" });
+        logger.logAction("SuperAdmins fetched: ", this.superAdmins, { name: "System" });
         return this.superadmins;
       } catch (err) {
         console.error("Error executing query", err.stack);
