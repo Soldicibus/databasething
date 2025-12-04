@@ -1,6 +1,7 @@
 const React = require("react");
 
-function Users({ data }) {
+function Users() {
+  const [someArr, setSomeArr] = React.useState([]);
   const addUser = async (e) => {
     e.preventDefault();
 
@@ -68,7 +69,7 @@ function Users({ data }) {
           </tr>
         </thead>
         <tbody>
-          {data.map((item) => (
+          {someArr.map((item) => (
             <tr key={item.id}>
               <td>{item.id}</td>
               <td>{item.name}</td>
