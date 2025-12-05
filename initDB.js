@@ -1,5 +1,6 @@
-require("dotenv").config();
-import { Database } from "src/database/database.js";
+import dotenv from "dotenv";
+dotenv.config();
+import { Database } from "./src/database/database.js";
 
 export const db = new Database(
   process.env.DB_USER,

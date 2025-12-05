@@ -1,9 +1,7 @@
-const express = require("express");
+import express from "express";
+import { db } from "../initDB.js";
+
 const router = express.Router();
-const React = require("react");
-const { renderToString } = require("react-dom/server");
-const Users = require("../views/Admins.jsx");
-const db = require("../initDB");
 
 router.get("/all", async (_req, res) => {
   try {
@@ -54,4 +52,4 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-module.exports = router;
+export const adminRoutes = router;

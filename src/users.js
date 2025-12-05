@@ -1,5 +1,5 @@
 // connecting the databse
-import { db } from "./database/database"
+import { db } from "../initDB.js";
 
 let users = [];
 let userId = 0;

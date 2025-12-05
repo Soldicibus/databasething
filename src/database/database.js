@@ -1,8 +1,9 @@
 import { Client } from "pg";
 import readline from "readline";
-import { User, Admin, Moderator, SuperAdmin } from "../src/users.js";
-import { logger } from "../src/users.js";
-require("dotenv").config();
+import { User, Admin, Moderator, SuperAdmin } from "../users.js";
+import { logger } from "../users.js";
+import dotenv from "dotenv";
+dotenv.config();
 
 function mapRowToEntity(row) {
   if (!row) return null;

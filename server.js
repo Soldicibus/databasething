@@ -1,10 +1,7 @@
 import express from "express";
-import React from "react";
-import { renderToString } from "react-dom/server";
-import { StaticRouter } from "react-router-dom/server";
-import App from "./src/App.js";
-import router from "./src/router.js";
-require("dotenv").config();
+import { router } from "./src/router.js";
+import dotenv from "dotenv";
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT ?? 5000;

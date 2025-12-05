@@ -1,12 +1,11 @@
 import express from "express";
-import React from "react";
-import { renderToString } from "react-dom/server";
 import { db } from "../initDB.js";
-import Users from "../src/components/Users.js";
+
+const router = express.Router();
 
 router.get("/all", async (_req, res) => {
   try {
-    const users = await db.getUsersOnly();
+    const users = await db.getAllUsers();
     res.json(users);
   } catch (err) {
     res
@@ -72,4 +71,5 @@ router.delete("/:id", async (req, res) => {
   res.json(deleted);
 });
 
-module.exports = router;
+export const userRoutes = router;
+
