@@ -47,18 +47,23 @@ router.get("/:id", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-  const { type, name, email, password } = req.body; // type = role
+  const { role, name, email, password } = req.body;
   try {
     const saved = await db.createUser({
       name: name,
       password: password,
       email: email,
-      role: type,
+      role: role,
     });
     res.json(saved);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
+});
+
+router.put("/:id/pass", async (req, res) => {
+  const updated = await db.resetPassword(req.body.id, req.body.newPassword);
+  res.json(updated);
 });
 
 router.put("/:id", async (req, res) => {

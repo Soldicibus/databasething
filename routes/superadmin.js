@@ -14,32 +14,6 @@ router.get("/all", async (_req, res) => {
   }
 });
 
-/*router.get("/", async (req, res) => {
-  const superAdmins = await db.getSuperAdminsOnly() || [];
-  console.log(db.superAdmins);
-  const search = req.query.search;
-  if (search) {
-    superAdmins = superAdmins.filter((u) =>
-      u.name.toLowerCase().includes(search.toLowerCase()),
-    );
-  }
-
-  const appHTML = renderToString(React.createElement(Users, { data: superAdmins }));
-
-  res.send(`
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <title>SuperAdmin Database</title>
-        <link rel="stylesheet" href="/style.css" />
-      </head>
-      <body>
-        <div id="root">${appHTML}</div>
-      </body>
-    </html>
-  `);
-});*/
-
 router.get("/:id", async (req, res) => {
   try {
     const superadmin = await db.getSuperAdminById(req.params.id);
@@ -54,4 +28,3 @@ router.get("/:id", async (req, res) => {
 });
 
 export const superAdminRoutes = router;
-

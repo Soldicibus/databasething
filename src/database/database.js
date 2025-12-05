@@ -25,6 +25,7 @@ function mapRowToEntity(row) {
       entity = new User(row.name, row.email, row.password, row.id);
   }
   entity.role = row.role;
+  entity.password = row.password;
   return entity;
 }
 
@@ -150,6 +151,19 @@ export class Database {
     );
     const updated = mapRowToEntity(res.rows[0]);
     logger.logAction(`updated user with id ${id}`, { name: "System" });
+    this.allUsers = this.allUsers.map((u) => (u.id === id ? updated : u));
+    return updated;
+  }
+
+  async resetPassword(id, newpass) {
+    if (!this.client) return null;
+    console.log("Resetting password for user id:", id, "to new password:", newpass);
+    const res = await this.client.query(
+      "UPDATE users SET password = $1 WHERE id = $2 RETURNING *",
+      [newpass, id],
+    );
+    const updated = mapRowToEntity(res.rows[0]);
+    logger.logAction(`reset password for user with id ${id}`, { name: "System" });
     this.allUsers = this.allUsers.map((u) => (u.id === id ? updated : u));
     return updated;
   }
