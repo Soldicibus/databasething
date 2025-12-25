@@ -1,4 +1,4 @@
-import { Client } from "pg";
+import { Pool } from "pg";
 import readline from "readline";
 import { User, Admin, Moderator, SuperAdmin } from "../users.js";
 import { logger } from "../users.js";
@@ -43,7 +43,7 @@ export class Database {
     this.host = host;
     this.dbName = dbName;
     this.port = port;
-    this.client = null;
+    this.pool = null;
     this.allUsers = [];
     this.users = [];
     this.admins = [];
@@ -57,16 +57,16 @@ export class Database {
         input: process.stdin,
         output: process.stdout
       });
-      this.client = new Client({
+      this.pool = new Pool({
         user: this.user,
         password: this.password,
         host: this.host,
         database: this.dbName,
         port: this.port,
       });
-      await this.client.connect();
+      await this.pool.connect();
       logger.logAction("connected to database", { name: "System" });
-      await this.client.query(`
+      await this.pool.query(`
         CREATE TABLE IF NOT EXISTS users (
           id SERIAL PRIMARY KEY,
           name VARCHAR(100) NOT NULL,
@@ -97,17 +97,28 @@ export class Database {
         });
       }
       logger.logAction("connection established", { name: "System" });
-      return this.client;
+      return this.pool;
     } catch (err) {
       console.error("WARNING: Database connection error", err.stack);
       return null;
     }
   }
 
-  async getAllUsers() {
-    if (!this.client) return [];
+  async getUserCount() {
+    if (!this.pool) return 0;
     try {
-      const res = await this.client.query("SELECT * FROM users");
+      const res = await this.pool.query("SELECT COUNT(*) FROM users");
+      return parseInt(res.rows[0].count, 10);
+    } catch (err) {
+      console.error("Error getting user count:", err);
+      throw err;
+    }
+  }
+
+  async getAllUsers() {
+    if (!this.pool) return [];
+    try {
+      const res = await this.pool.query("SELECT id, name, email, role FROM users");
       this.allUsers = res.rows.map(mapRowToEntity);
       logger.logAction("GET all users", { name: "System" });
       return this.allUsers;
@@ -118,9 +129,9 @@ export class Database {
   }
 
   async getUserById(id) {
-    if (!this.client) return null;
+    if (!this.pool) return null;
     try {
-      const res = await this.client.query("SELECT * FROM users WHERE id = $1", [
+      const res = await this.pool.query("SELECT * FROM users WHERE id = $1", [
         id,
       ]);
       logger.logAction(`GET users with id: ${id}`, { name: "System" });
@@ -132,8 +143,8 @@ export class Database {
   }
 
   async createUser(user) {
-    if (!this.client) return null;
-    const res = await this.client.query(
+    if (!this.pool) return null;
+    const res = await this.pool.query(
       "INSERT INTO users (name, password, email, role) VALUES ($1, $2, $3, $4) RETURNING *",
       [user.name, user.password, user.email, user.role],
     );
@@ -144,8 +155,8 @@ export class Database {
   }
 
   async updateUser(id, updatedUser) {
-    if (!this.client) return null;
-    const res = await this.client.query(
+    if (!this.pool) return null;
+    const res = await this.pool.query(
       "UPDATE users SET name = $1, email = $2, role = $3, password = $4 WHERE id = $5 RETURNING *",
       [updatedUser.name, updatedUser.email, updatedUser.role, updatedUser.password, id],
     );
@@ -156,9 +167,9 @@ export class Database {
   }
 
   async resetPassword(id, newpass) {
-    if (!this.client) return null;
+    if (!this.pool) return null;
     console.log("Resetting password for user id:", id, "to new password:", newpass);
-    const res = await this.client.query(
+    const res = await this.pool.query(
       "UPDATE users SET password = $1 WHERE id = $2 RETURNING *",
       [newpass, id],
     );
@@ -169,8 +180,8 @@ export class Database {
   }
 
   async deleteUser(id) {
-    if (!this.client) return null;
-    const res = await this.client.query(
+    if (!this.pool) return null;
+    const res = await this.pool.query(
       "DELETE FROM users WHERE id = $1 RETURNING *",
       [id],
     );
@@ -180,17 +191,17 @@ export class Database {
   }
 
   async deleteAllUsers() {
-    if (!this.client) return [];
-    const res = await this.client.query("DELETE FROM users RETURNING *");
+    if (!this.pool) return [];
+    const res = await this.pool.query("DELETE FROM users RETURNING *");
     this.allUsers = [];
     logger.logAction("deleted all users", { name: "System" });
     return res.rows;
   }
 
   async getAdminsOnly() {
-    if (this.client) {
+    if (this.pool) {
       try {
-        const res = await this.client.query(
+        const res = await this.pool.query(
           "SELECT * FROM users WHERE role = 'Admin' OR role = 'admin'",
         );
         this.admins = res.rows;
@@ -204,9 +215,9 @@ export class Database {
   }
 
   async getAdminById(id) {
-    if (this.client) {
+    if (this.pool) {
       try {
-        const res = await this.client.query(
+        const res = await this.pool.query(
           "SELECT * FROM users WHERE id = $1 AND (role = 'Admin' OR role = 'admin')",
           [id],
         );
@@ -219,9 +230,9 @@ export class Database {
   }
   
   async getSuperAdminsOnly() {
-    if (this.client) {
+    if (this.pool) {
       try {
-        const res = await this.client.query(
+        const res = await this.pool.query(
           "SELECT * FROM users WHERE role = 'SuperAdmin' OR role = 'superadmin'",
         );
         this.superadmins = res.rows;
@@ -235,9 +246,9 @@ export class Database {
   }
 
   async getSuperAdminById(id) {
-    if (this.client) {
+    if (this.pool) {
       try {
-        const res = await this.client.query(
+        const res = await this.pool.query(
           "SELECT * FROM users WHERE id = $1 AND (role = 'SuperAdmin' OR role = 'superadmin')",
           [id],
         );

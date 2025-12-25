@@ -14,6 +14,15 @@ router.get("/all", async (_req, res) => {
   }
 });
 
+router.get("/count", async (_req, res) => {
+  try {
+    const count = await db.getUserCount();
+    res.json({ count });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch user count", details: err.message });
+  }
+});
+
 /*router.get("/", async (req, res) => {
   const users = await db.getUsersOnly() || [];
   console.log(db.allUsers);
